@@ -41,6 +41,7 @@ def scrap_users(group):
 def html_table_users(users, group_name):
     data =[]
     headers = ["Username", "Name", "Group"]
+
     with open('users.html', 'w') as file:
         file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\">")
         for user in users:
@@ -65,17 +66,37 @@ def html_table_users(users, group_name):
 def html_table_messages(chat, keyword):
     data =[]
     headers = ["Username", "Name", "Group", "Keyword", "Message"]
+
     with open('keywoard_search.html', 'w') as file:
         file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\">")
+
         for i, message in enumerate(client.iter_messages(chat)):
             if message.message and keyword in message.message:
                 user = client.get_entity(message.from_id)
+
+                if user.username:
+                    username = user.username
+                else:
+                    username = ""
+                if user.first_name:
+                    first_name = user.first_name
+                else:
+                    first_name = ""
+                if user.last_name:
+                    last_name = user.last_name
+                else:
+                    last_name = ""
+                name= (first_name + ' ' + last_name).strip()
+
                 data.append(
-                            [user.username+"  ", user.first_name+" "+user.last_name+"  ",
-                            chat.title+"  ", keyword+"  ", message.message]
+                            [username+"     ", first_name+"     ;"+last_name+"     ",
+                            chat.title+"     ", keyword+"     ", message.message]
                             )
+
+
             if i>10000:
                 break
+            
         file.write(tabulate(data, headers = headers, tablefmt='html'))
 
 
